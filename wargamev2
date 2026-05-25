@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+
+typedef struct {
+    char cor[10];   
+    char nome [30];
+    int tropas;
+
+} Territorio;
+
+void cadastrarTerritorio(Territorio* mapa, int n) {
+    for (int i = 0; i<n ; i++) {
+        printf("\n --- Territorio %d ---\n", i+1);
+
+        printf("Nome: ");
+        scanf("%s", mapa[i].nome);
+
+        printf("Cor: ");
+        scanf("%s", mapa[i].cor);
+
+        printf("Tropas: ");
+        scanf("%d", &mapa[i].tropas);
+    }
+}
+
+void exibirTerritorio(Territorio* mapa, int n) {
+    printf("\n=== Territorios Cadastrados ===\n");
+    for (int i = 0; i < n; i++){
+        printf ("\nTerritorio %d---\n", i+1);
+        printf("Nome: %s\n", mapa[i].nome);
+        printf("Cor: %s\n", mapa[i].cor);
+        printf("Tropas: %d\n", mapa[i].tropas);
+    }
+}
+
+void atacarTerritorio(Territorio* atacante, Territorio* defensor) {
+    int dadoAtacante = (rand() % 6) + 1;
+    int dadoDefensor = (rand() % 6) + 1;
+    
+    printf("\nAtacante tirou: %d\n", dadoAtacante);
+    printf("\nDefensor tirou: %d\n", dadoDefensor);
+
+    if (dadoAtacante > dadoDefensor) {
+        printf("Atacante venceu!\n");
+        strcpy(defensor->cor, atacante->cor);
+        defensor->tropas = defensor->tropas / 2;
+    } else {
+        printf("defensor resistiu!\n");
+        atacante->tropas--;
+    }
+}
+
+void liberarMemoria (Territorio* mapa) {
+    free(mapa);
+}
+
+int main() {
+
+    srand(time(NULL));
+
+    int n;
+    printf("Quantos territorios deseja criar?");
+    scanf("%d", &n);
+
+    Territorio* mapa = calloc (n, sizeof(Territorio));
+
+    cadastrarTerritorio(mapa, n);
+    exibirTerritorio(mapa, n);
+
+    int a, d; 
+    printf("\nDigite o numero do territorio atacante: ");
+    scanf("%d", &a);
+    printf("\nDigite o numero do territorio defensor: ");
+    scanf("%d", &d);
+
+    if(strcmp(mapa[a-1].cor, mapa[d-1].cor) ==0) {
+        printf("Você não pode atacar seu proprio territorio!\n");
+    } else {
+        atacarTerritorio(&mapa[a-1], &mapa[d-1]);
+        exibirTerritorio(mapa, n);
+    }
+
+    liberarMemoria(mapa);
+    
+    return 0;
+}
